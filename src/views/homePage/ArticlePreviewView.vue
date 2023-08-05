@@ -8,8 +8,9 @@
           small
           background
           layout="prev, pager, next"
+          :hide-on-single-page="hidePageComponent"
           :current-page="page.current"
-          :page-count="page.total"
+          :page-count="page.pages"
           @current-change="pageArticle"
       />
     </div>
@@ -22,13 +23,14 @@ import axios from "axios";
 import type {Result} from "@/interface/Result";
 import type {Page} from "@/interface/page";
 import type {ArticlePreview} from "@/interface/Article";
-import {onMounted, reactive} from "vue";
+import {onMounted, reactive, ref} from "vue";
 
 const page = reactive<Page<ArticlePreview>>({
   records: [],
   current: 0,
-  total: 0
+  pages: 0
 })
+let hidePageComponent = ref(false)
 
 onMounted(() => {
   pageArticle(1);
@@ -47,7 +49,10 @@ function pageArticle(current: number) {
         if (result.code === 30031) {
           page.records = result.data.records;
           page.current = parseInt(result.data.current);
-          page.total = parseInt(result.data.pages)
+          page.pages = parseInt(result.data.pages)
+          if (page.pages === 0 || page.pages === 1) {
+            hidePageComponent.value = true
+          }
         }
       })
       .catch()
@@ -68,6 +73,5 @@ function pageArticle(current: number) {
     justify-content: center;
     text-align: center;
   }
-  
 }
 </style>

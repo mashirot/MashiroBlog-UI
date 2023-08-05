@@ -14,7 +14,7 @@
       </div>
       <div class="category">
         <div class="header">分类</div>
-        <div class="category-item" v-for="(category, index) in categories">
+        <div class="category-item" v-for="(category) in categories">
           {{ category.name }}
         </div>
       </div>
