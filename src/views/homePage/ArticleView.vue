@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="article">
+    <div class="article-show">
       <div class="title">
         {{ article.title }}
       </div>
@@ -11,7 +11,8 @@
         </div>
         <div class="createTime">
           <i class="bi bi-clock"></i>
-          {{ dayjs(article.createTime).format("YYYY-MM-DD hh:mm:ss") }}
+<!--          避免ts检测报错，使用了dayjs的插件，没有问题-->
+          {{ dayjs(article.createTime as any).format("YYYY-MM-DD hh:mm:ss") }}
         </div>
         <div class="tag">
           <i class="bi bi-tags"></i>
@@ -28,7 +29,7 @@
         </div>
       </div>
       <div class="content">
-        {{ article.content }}
+        <v-md-editor v-model="article.content" mode="preview"></v-md-editor>
       </div>
     </div>
     <div class="comment-show">
@@ -43,12 +44,12 @@
               {{ comment.senderNickname }}
             </div>
             <div class="sendTime">
-              {{ dayjs(comment.createTime).format("YYYY-MM-DD hh:mm:ss") }}
+              {{ dayjs(comment.createTime as any).format("YYYY-MM-DD hh:mm:ss") }}
             </div>
           </div>
         </div>
         <div class="commentContent">
-          {{ comment.content }}
+          <v-md-editor v-model="comment.content" mode="preview"></v-md-editor>
         </div>
       </div>
       <div v-else class="no-comment">
@@ -70,7 +71,7 @@
       </div>
       <el-form ref="commentFormRef" :model="commentForm" :rules="commentFormRule">
         <el-form-item prop="content" label="评论：">
-          <el-input v-model="commentForm.content" type="textarea"/>
+          <v-md-editor v-model="commentForm.content" height="200px"></v-md-editor>
         </el-form-item>
         <div class="nickname-email">
           <el-form-item prop="senderNickname" label="昵称：">
@@ -79,14 +80,14 @@
           <el-form-item prop="senderEmail" label="邮箱：">
             <el-input v-model="commentForm.senderEmail"/>
           </el-form-item>
+          <el-form-item label="私密评论">
+            <el-switch v-model="commentForm.secret"/>
+          </el-form-item>
         </div>
         <div class="button">
           <el-form-item>
             <el-button type="primary" @click="handlerSubmit(commentFormRef)">评论</el-button>
             <el-button @click="resetForm(commentFormRef)">清空</el-button>
-          </el-form-item>
-          <el-form-item label="私密评论">
-            <el-switch v-model="commentForm.secret"/>
           </el-form-item>
         </div>
       </el-form>
@@ -239,7 +240,7 @@ function pageComment(current: number) {
   padding: 30px 50px;
   overflow: auto;
 
-  .article {
+  .article-show {
 
     .title {
       font-size: 24px;
@@ -331,6 +332,7 @@ function pageComment(current: number) {
     }
 
     .no-comment {
+      margin: 40px;
       text-align: center;
       font-size: 20px;
       color: #7b7b7b;
@@ -350,14 +352,14 @@ function pageComment(current: number) {
       :deep(.el-form-item:nth-child(1)) {
         margin-right: 10px;
       }
+
+      :deep(.el-form-item:nth-child(3)) {
+        margin-left: auto;
+      }
     }
 
     .button {
       display: flex;
-
-      :deep(.el-form-item:nth-child(2)) {
-        margin-left:auto;
-      }
     }
   }
 }
