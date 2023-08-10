@@ -3,13 +3,14 @@ export interface ArticlePreview {
     title: string,
     previewContent: string,
     commentCount: number,
+    category: Array<string>,
     tag: Array<string>,
     createTime: Array<number>
 }
 
 export interface Article {
     id: string,
-    articleId: string,
+    authorId: string,
     title: string,
     content: string,
     category: Array<string>,

@@ -1,8 +1,20 @@
 export interface SysInfo {
-    ownerNickname: string | null,
-    ownerEmail: string | null,
-    ownerProfile: string | null,
-    articleCount: number | null,
-    commentCount: number | null,
-    runDay: number | null
+    ownerNickname: string,
+    ownerEmail: string,
+    ownerProfile: string,
+    articleCount: number,
+    commentCount: number,
+    runDay: number
+}
+
+export interface SysDetailInfo {
+    ownerNickname: string,
+    ownerEmail: string,
+    ownerProfile: string,
+    articleCount: number,
+    commentCount: number,
+    unReviewCommentCount: number,
+    categoryCount: number,
+    tagCount: number,
+    runDay: number
 }
