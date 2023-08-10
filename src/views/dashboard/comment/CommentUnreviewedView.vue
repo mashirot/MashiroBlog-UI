@@ -2,25 +2,21 @@
   <div class="container">
     <div class="header">
       <div class="title">
-        文章管理
-      </div>
-      <div class="btn">
-        <el-button @click="handleInsert">新增文章</el-button>
+        待审核评论
       </div>
     </div>
     <div class="table">
       <el-table :data="page.records" style="width: 100%">
-        <el-table-column prop="title" label="标题"/>
-        <el-table-column label="分类">
+        <el-table-column prop="senderEmail" label="邮箱"/>
+        <el-table-column prop="senderNickname" label="昵称"/>
+        <el-table-column label="文章">
           <template #default="scope">
-            <div v-if="scope.row.category.length > 0">
-              {{ scope.row.category.join(", ") }}
-            </div>
-            <div v-else>
-              无
-            </div>
+            <el-button type="text" @click="jump2Article(scope.row.articleId)">文章</el-button>
           </template>
         </el-table-column>
+        <el-table-column prop="content" label="内容"/>
+        <el-table-column prop="senderIp" label="IP"/>
+        <el-table-column prop="secret" label="是否私密"/>
         <el-table-column label="创建日期">
           <template #default="scope">
             {{ dayjs(scope.row.createTime as any).format("YYYY-MM-DD hh:mm:ss") }}
@@ -28,10 +24,10 @@
         </el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.row.articleId)">
-              编辑
+            <el-button size="small" type="primary" @click="handelReview(scope.row.id)">
+              通过
             </el-button>
-            <el-button size="small" type="danger" @click="handleDelete(scope.row.articleId)">
+            <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">
               删除
             </el-button>
           </template>
@@ -46,7 +42,7 @@
           :hide-on-single-page="hidePageComponent"
           :current-page="page.current"
           :page-count="page.pages"
-          @current-change="pageArticle"
+          @current-change="pageComment"
       />
     </div>
   </div>
@@ -60,10 +56,10 @@ import {ElMessageBox, ElNotification} from "element-plus";
 import {useRouter} from "vue-router";
 import type {Result} from "@/interface/result";
 import type {Page} from "@/interface/page";
-import type {ArticlePreview} from "@/interface/article";
+import type {Comment} from "@/interface/comment";
 
 const router = useRouter()
-const page = reactive<Page<ArticlePreview>>({
+const page = reactive<Page<Comment>>({
   records: [],
   current: 0,
   pages: 0
@@ -71,39 +67,36 @@ const page = reactive<Page<ArticlePreview>>({
 let hidePageComponent = ref(false)
 
 onMounted(() => {
-  pageArticle(1);
+  pageComment(1);
 })
 
-function handleInsert() {
-  router.push({name: 'articleInsert'})
+function jump2Article(articleId: string) {
+  const path = router.resolve(`/article/${articleId}`);
+  window.open(path.href)
 }
 
-function handleDelete(articleId: string) {
+function handelReview(commentId: string) {
   ElMessageBox.confirm(
-      '确定要删除这篇文章吗？',
+      '确定要通过这条评论吗？',
       'Warning',
       {
-        confirmButtonText: '删除',
+        confirmButtonText: '通过',
         cancelButtonText: '取消',
         type: 'warning',
       }
   ).then(() => {
-    subDel(articleId)
+    subReviewed(commentId)
   })
 }
 
-function handleEdit(articleId: string) {
-  router.push({name: 'articleEdit', params: {'articleId': articleId}})
-}
-
-function subDel(articleId: string) {
-  axios.delete(`/article/${articleId}`)
+function subReviewed(commentId: string) {
+  axios.put(`/comment/review/${commentId}`)
       .then(resp => {
         let result = resp.data as Result
-        if (result.code === 20021) {
-          ElNotification.success("删除成功")
-          pageArticle(page.current)
-        } else if (result.code === 20020) {
+        if (result.code === 60031) {
+          ElNotification.success("审核通过")
+          pageComment(page.current)
+        } else if (result.code === 60030) {
           ElNotification.warning(result.msg as string)
         } else {
           ElNotification.error("Network Err")
@@ -114,8 +107,40 @@ function subDel(articleId: string) {
       })
 }
 
-function pageArticle(current: number) {
-  axios.get("/article/page", {
+function handleDelete(commentId: string) {
+  ElMessageBox.confirm(
+      '确定要删除这条评论吗？',
+      'Warning',
+      {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  ).then(() => {
+    subDel(commentId)
+  })
+}
+
+function subDel(commentId: string) {
+  axios.delete(`/comment/${commentId}`)
+      .then(resp => {
+        let result = resp.data as Result
+        if (result.code === 60021) {
+          ElNotification.success("删除成功")
+          pageComment(page.current)
+        } else if (result.code === 60020) {
+          ElNotification.warning(result.msg as string)
+        } else {
+          ElNotification.error("Network Err")
+        }
+      })
+      .catch(e => {
+        console.log(e)
+      })
+}
+
+function pageComment(current: number) {
+  axios.get("/comment/pageUnreviewed", {
         params: {
           page: current,
           pageSize: 10
@@ -124,14 +149,14 @@ function pageArticle(current: number) {
   )
       .then(resp => {
         let result = resp.data as Result
-        if (result.code === 30031) {
+        if (result.code === 60041) {
           page.records = result.data.records;
           page.current = parseInt(result.data.current);
           page.pages = parseInt(result.data.pages);
           if (page.pages === 0 || page.pages === 1) {
             hidePageComponent.value = true
           }
-        } else if (result.code === 30030) {
+        } else if (result.code === 60040) {
           ElNotification.warning(result.msg as string)
         } else {
           ElNotification.error("Network Err")

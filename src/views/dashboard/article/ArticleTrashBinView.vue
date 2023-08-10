@@ -2,10 +2,7 @@
   <div class="container">
     <div class="header">
       <div class="title">
-        文章管理
-      </div>
-      <div class="btn">
-        <el-button @click="handleInsert">新增文章</el-button>
+        文章回收站
       </div>
     </div>
     <div class="table">
@@ -28,11 +25,8 @@
         </el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.row.articleId)">
-              编辑
-            </el-button>
-            <el-button size="small" type="danger" @click="handleDelete(scope.row.articleId)">
-              删除
+            <el-button size="small" type="success" @click="handleReply(scope.row.articleId)">
+              恢复
             </el-button>
           </template>
         </el-table-column>
@@ -46,7 +40,7 @@
           :hide-on-single-page="hidePageComponent"
           :current-page="page.current"
           :page-count="page.pages"
-          @current-change="pageArticle"
+          @current-change="pageDelArticle"
       />
     </div>
   </div>
@@ -57,12 +51,10 @@ import axios from "axios";
 import dayjs from "dayjs";
 import {onMounted, ref, reactive} from "vue";
 import {ElMessageBox, ElNotification} from "element-plus";
-import {useRouter} from "vue-router";
 import type {Result} from "@/interface/result";
 import type {Page} from "@/interface/page";
 import type {ArticlePreview} from "@/interface/article";
 
-const router = useRouter()
 const page = reactive<Page<ArticlePreview>>({
   records: [],
   current: 0,
@@ -71,39 +63,31 @@ const page = reactive<Page<ArticlePreview>>({
 let hidePageComponent = ref(false)
 
 onMounted(() => {
-  pageArticle(1);
+  pageDelArticle(1);
 })
 
-function handleInsert() {
-  router.push({name: 'articleInsert'})
-}
-
-function handleDelete(articleId: string) {
+function handleReply(articleId: string) {
   ElMessageBox.confirm(
-      '确定要删除这篇文章吗？',
+      '确定要恢复这篇文章吗？',
       'Warning',
       {
-        confirmButtonText: '删除',
+        confirmButtonText: '恢复',
         cancelButtonText: '取消',
         type: 'warning',
       }
   ).then(() => {
-    subDel(articleId)
+    subReply(articleId)
   })
 }
 
-function handleEdit(articleId: string) {
-  router.push({name: 'articleEdit', params: {'articleId': articleId}})
-}
-
-function subDel(articleId: string) {
-  axios.delete(`/article/${articleId}`)
+function subReply(articleId: string) {
+  axios.put(`/article/reply/${articleId}`)
       .then(resp => {
         let result = resp.data as Result
-        if (result.code === 20021) {
-          ElNotification.success("删除成功")
-          pageArticle(page.current)
-        } else if (result.code === 20020) {
+        if (result.code === 20031) {
+          ElNotification.success("恢复成功")
+          pageDelArticle(page.current)
+        } else if (result.code === 20030) {
           ElNotification.warning(result.msg as string)
         } else {
           ElNotification.error("Network Err")
@@ -114,8 +98,8 @@ function subDel(articleId: string) {
       })
 }
 
-function pageArticle(current: number) {
-  axios.get("/article/page", {
+function pageDelArticle(current: number) {
+  axios.get("/article/pageDel", {
         params: {
           page: current,
           pageSize: 10
