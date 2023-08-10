@@ -3,24 +3,24 @@
     <el-aside>
       <el-row class="tac">
         <el-col :span="12">
-          <el-menu default-active="1">
-            <el-menu-item index="1" @click="router.push({name: 'overview'})">
+          <el-menu :default-active="route.path" router :default-openeds="['article', 'comment']">
+            <el-menu-item index="/dashboard" @click="router.push({name: 'overview'})">
               <span>概况</span>
             </el-menu-item>
-            <el-sub-menu index="2">
+            <el-sub-menu index="article">
               <template #title>
                 <span>文章管理</span>
               </template>
-              <el-menu-item index="2-1" @click="router.push({name: 'articleManage'})"><span>文章列表</span></el-menu-item>
-              <el-menu-item index="2-2" @click="router.push({name: 'articleTrashBin'})"><span>回收站</span></el-menu-item>
+              <el-menu-item index="/dashboard/article"><span>文章列表</span></el-menu-item>
+              <el-menu-item index="/dashboard/article/trash"><span>回收站</span></el-menu-item>
             </el-sub-menu>
-            <el-sub-menu index="3">
+            <el-sub-menu index="comment">
               <template #title>
                 <span>评论管理</span>
               </template>
-              <el-menu-item index="3-1" @click="router.push({name: 'commentManage'})"><span>评论列表</span></el-menu-item>
-              <el-menu-item index="3-2" @click="router.push({name: 'commentUnreviewed'})"><span>待审核评论</span></el-menu-item>
-              <el-menu-item index="3-3" @click="router.push({name: 'commentTrashBin'})"><span>回收站</span></el-menu-item>
+              <el-menu-item index="/dashboard/comment"><span>评论列表</span></el-menu-item>
+              <el-menu-item index="/dashboard/comment/unreviewed"><span>待审核评论</span></el-menu-item>
+              <el-menu-item index="/dashboard/comment/trash"><span>回收站</span></el-menu-item>
             </el-sub-menu>
           </el-menu>
         </el-col>
@@ -37,8 +37,9 @@ import {useSysInfoStore} from "@/stores/counter";
 import {onMounted} from "vue";
 import axios from "axios";
 import type {Result} from "@/interface/result";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
+const route = useRoute();
 const router = useRouter();
 const sysInfoStore = useSysInfoStore();
 
