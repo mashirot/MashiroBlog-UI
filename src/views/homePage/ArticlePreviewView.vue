@@ -20,9 +20,9 @@
 <script setup lang="ts">
 import ArticlePreviewComponent from "@/components/ArticlePreviewComponent.vue";
 import axios from "axios";
-import type {Result} from "@/interface/Result";
+import type {Result} from "@/interface/result";
 import type {Page} from "@/interface/page";
-import type {ArticlePreview} from "@/interface/Article";
+import type {ArticlePreview} from "@/interface/article";
 import {onMounted, reactive, ref} from "vue";
 
 const page = reactive<Page<ArticlePreview>>({
@@ -49,13 +49,15 @@ function pageArticle(current: number) {
         if (result.code === 30031) {
           page.records = result.data.records;
           page.current = parseInt(result.data.current);
-          page.pages = parseInt(result.data.pages)
+          page.pages = parseInt(result.data.pages);
           if (page.pages === 0 || page.pages === 1) {
             hidePageComponent.value = true
           }
         }
-      })
-      .catch()
+      }).catch(e => {
+        console.log(e)
+      }
+  )
 }
 </script>
 

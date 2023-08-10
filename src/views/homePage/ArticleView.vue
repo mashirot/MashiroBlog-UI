@@ -11,7 +11,7 @@
         </div>
         <div class="createTime">
           <i class="bi bi-clock"></i>
-<!--          避免ts检测报错，使用了dayjs的插件，没有问题-->
+          <!--          避免ts检测报错，使用了dayjs的插件，没有问题-->
           {{ dayjs(article.createTime as any).format("YYYY-MM-DD hh:mm:ss") }}
         </div>
         <div class="tag">
@@ -101,9 +101,9 @@ import {useRoute, useRouter} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
 import {ElNotification} from "element-plus";
 import type {FormRules, FormInstance} from "element-plus";
-import type {Result} from "@/interface/Result";
-import type {Article} from "@/interface/Article";
-import type {CommentView, CommentSubmit} from "@/interface/Comment";
+import type {Result} from "@/interface/result";
+import type {Article} from "@/interface/article";
+import type {CommentView, CommentSubmit} from "@/interface/comment";
 import type {Page} from "@/interface/page";
 import dayjs from "dayjs";
 
@@ -113,7 +113,7 @@ const articleId = route.params.articleId as string;
 
 let article = reactive<Article>({
   id: "",
-  articleId: "",
+  authorId: "",
   title: "",
   content: "",
   category: [],
@@ -137,16 +137,16 @@ const commentForm = reactive<CommentSubmit>({
 })
 const commentFormRule = reactive<FormRules<CommentSubmit>>({
   content: [
-    { required: true, message: '请输入评论内容', trigger: 'blur' },
+    {required: true, message: '请输入评论内容', trigger: 'blur'},
   ],
   senderNickname: [
-    { required: true, message: '请输入昵称', trigger: 'blur' },
-    { min: 2, max: 20, message: '长度在 2 到 20', trigger: 'blur' },
+    {required: true, message: '请输入昵称', trigger: 'blur'},
+    {min: 2, max: 20, message: '长度在 2 到 20', trigger: 'blur'},
   ],
   senderEmail: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { pattern: /^[A-Za-z0-9]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, message: '请输入合法邮箱', trigger: 'blur' },
-    { min: 5, max: 30, message: '长度在 5 到 30', trigger: 'blur' },
+    {required: true, message: '请输入邮箱', trigger: 'blur'},
+    {pattern: /^[A-Za-z0-9]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, message: '请输入合法邮箱', trigger: 'blur'},
+    {min: 5, max: 30, message: '长度在 5 到 30', trigger: 'blur'},
   ]
 })
 
@@ -183,7 +183,7 @@ async function handlerSubmit(formEl: FormInstance | undefined) {
   })
 }
 
-function resetForm (formEl: FormInstance | undefined) {
+function resetForm(formEl: FormInstance | undefined) {
   if (!formEl) return
   formEl.resetFields()
 }
@@ -193,7 +193,15 @@ function getArticle() {
       .then(resp => {
         let result = resp.data as Result
         if (result.code === 20041) {
-          article = result.data
+          const data = result.data as Article;
+          article.id = data.id
+          article.authorId = data.authorId
+          article.title = data.title
+          article.content = data.content
+          article.category = data.category
+          article.tag = data.tag
+          article.createTime = data.createTime
+          article.updateTime = data.updateTime
         } else if (result.code === 20040) {
           router.back()
         } else {
@@ -243,7 +251,7 @@ function pageComment(current: number) {
   .article-show {
 
     .title {
-      font-size: 24px;
+      font-size: 36px;
       font-weight: 700;
     }
 

@@ -28,18 +28,18 @@
 import md5 from 'crypto-js/md5';
 import axios from "axios";
 import {onMounted, reactive, ref} from "vue";
-import type {Result} from "@/interface/Result";
+import type {Result} from "@/interface/result";
 import type {SysInfo} from "@/interface/sysInfo";
-import type {Category} from "@/interface/Category";
+import type {Category} from "@/interface/category";
 
 let avatar = ref<string>();
 let sysInfo = ref<SysInfo>({
-  ownerNickname: null,
-  ownerEmail: null,
-  ownerProfile: null,
-  articleCount: null,
-  commentCount: null,
-  runDay: null
+  ownerNickname: "",
+  ownerEmail: "",
+  ownerProfile: "",
+  articleCount: 0,
+  commentCount: 0,
+  runDay: 0
 });
 let categories = reactive<Array<Category>>([]);
 
