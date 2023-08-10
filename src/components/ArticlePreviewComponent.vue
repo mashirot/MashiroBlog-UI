@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import type {ArticlePreview} from '@/interface/Article';
+import type {ArticlePreview} from '@/interface/article';
 import dayjs from "dayjs";
 
 defineProps({
