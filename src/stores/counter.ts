@@ -1,12 +1,20 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import {reactive} from 'vue'
+import {defineStore} from 'pinia'
+import type {SysDetailInfo} from "@/interface/sysInfo";
 
-export const useCounterStore = defineStore('counter', () => {
-  const count = ref(0)
-  const doubleCount = computed(() => count.value * 2)
-  function increment() {
-    count.value++
-  }
+export const useSysInfoStore = defineStore('counter', () => {
 
-  return { count, doubleCount, increment }
+    let sysDetail = reactive<SysDetailInfo>({
+        ownerNickname: "",
+        ownerEmail: "",
+        ownerProfile: "",
+        articleCount: 0,
+        commentCount: 0,
+        unReviewCommentCount: 0,
+        categoryCount: 0,
+        tagCount: 0,
+        runDay: 0
+    });
+
+    return {sysDetail}
 })
