@@ -38,6 +38,7 @@ import {onMounted} from "vue";
 import axios from "axios";
 import type {Result} from "@/interface/result";
 import {useRoute, useRouter} from "vue-router";
+import {ElNotification} from "element-plus";
 
 const route = useRoute();
 const router = useRouter();
@@ -62,7 +63,7 @@ function getSysInfo() {
           sysInfoStore.sysDetail.categoryCount = parseInt(data.categoryCount);
           sysInfoStore.sysDetail.tagCount = parseInt(data.tagCount);
         } else {
-          console.log(result.msg)
+          ElNotification.warning(result.msg)
         }
       }).catch(e => {
         console.log(e)

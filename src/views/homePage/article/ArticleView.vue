@@ -17,12 +17,12 @@
         <div class="tag">
           <i class="bi bi-tags"></i>
           <div v-if="article.tag.length === 0" style="display:flex;">
-            <div class="tag-item">
+            <div class="no-tag">
               NoTag
             </div>
           </div>
           <div v-else style="display:flex;">
-            <div class="tag-item" v-for="(tag) in article.tag">
+            <div class="tag-item" v-for="(tag) in article.tag" @click="jump2TagArticlePreviewView(tag)">
               {{ tag }}
             </div>
           </div>
@@ -141,6 +141,10 @@ onMounted(() => {
   pageComment(1)
 })
 
+function jump2TagArticlePreviewView(tagName: String) {
+  router.push({name: 'tagArticlePreview', params: {tagName: tagName}})
+}
+
 function handleCancelReply() {
   isReply.value = false
 }
@@ -244,17 +248,30 @@ function pageComment(current: number) {
           margin: 0;
         }
 
-        .tag-item {
-          display: inline-block;
+        .no-tag {
+          display: flex;
           justify-content: left;
-          margin: 0 5px;
           padding: 5px;
-
+          margin: 0 5px;
           height: 12px;
-          line-height: 12px;
           text-align: center;
           background-color: #f6f6f6;
           border-radius: 5px;
+        }
+
+        .tag-item {
+          display: flex;
+          justify-content: left;
+          padding: 5px;
+          margin: 0 5px;
+          height: 12px;
+          text-align: center;
+          background-color: #f6f6f6;
+          border-radius: 5px;
+
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
     }

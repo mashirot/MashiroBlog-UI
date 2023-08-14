@@ -1,4 +1,6 @@
 import {createRouter, createWebHashHistory} from 'vue-router'
+import {ElNotification} from "element-plus";
+import axios from "axios";
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -32,7 +34,7 @@ const router = createRouter({
         },
         {
             path: '/dashboard',
-            name: 'dashBoard',
+            name: 'dashboard',
             component: () => import('@/views/dashboard/Dashboard.vue'),
             children: [
                 {
@@ -75,7 +77,26 @@ const router = createRouter({
                     name: 'commentTrashBin',
                     component: () => import('@/views/dashboard/comment/CommentTrashBinView.vue')
                 },
-            ]
+            ],
+            beforeEnter: (to, from, next) => {
+                if (localStorage.getItem("authToken")) {
+                    axios.interceptors.request.use(function (config) {
+                        config.headers.Authorization = `Bearer ${localStorage.getItem("authToken")}`
+                        return config;
+                    }, function (error) {
+                        return Promise.reject(error);
+                    });
+                    next()
+                } else {
+                    ElNotification.warning('无权限，请登录')
+                    next({name: 'login'})
+                }
+            }
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: () => import('@/views/dashboard/Login.vue')
         }
     ]
 })

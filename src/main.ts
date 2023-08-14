@@ -21,6 +21,7 @@ import Prism from 'prismjs';
 
 import App from './App.vue'
 import router from './router'
+import {ElNotification} from "element-plus";
 
 const app = createApp(App)
 
@@ -36,6 +37,15 @@ app.use(router)
 app.use(VueMarkdownEditor);
 
 axios.defaults.baseURL = "http://127.0.0.1:8080";
+axios.interceptors.response.use(function (response) {
+    return response;
+}, function (error) {
+    if (error.response.data.code === 10010 || error.response.data.code === 10012) {
+        ElNotification.error(error.response.data.msg);
+        router.push({name: 'login'})
+    }
+    return Promise.reject(error);
+});
 
 dayjs.extend(arraySupport)
 
