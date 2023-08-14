@@ -14,6 +14,16 @@
             <el-button type="text" @click="jump2Article(scope.row.articleId)">文章</el-button>
           </template>
         </el-table-column>
+        <el-table-column label="回复">
+          <template #default="scope">
+            <div v-if="scope.row.receiverNickname === null">
+              楼主
+            </div>
+            <div v-else>
+              {{ scope.row.receiverNickname }}
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="content" label="内容"/>
         <el-table-column prop="senderIp" label="IP"/>
         <el-table-column prop="secret" label="是否私密"/>
@@ -24,7 +34,7 @@
         </el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
-            <el-button size="small" type="success" @click="handleReply(scope.row.id)">
+            <el-button size="small" type="success" @click="handleRecover(scope.row.id)">
               恢复
             </el-button>
           </template>
@@ -72,7 +82,7 @@ function jump2Article(articleId: string) {
   window.open(path.href)
 }
 
-function handleReply(commentId: string) {
+function handleRecover(commentId: string) {
   ElMessageBox.confirm(
       '确定要恢复这篇文章吗？',
       'Warning',
@@ -82,12 +92,12 @@ function handleReply(commentId: string) {
         type: 'warning',
       }
   ).then(() => {
-    subReply(commentId)
+    subRecover(commentId)
   })
 }
 
-function subReply(commentId: string) {
-  axios.put(`/comment/reply/${commentId}`)
+function subRecover(commentId: string) {
+  axios.put(`/comment/recover/${commentId}`)
       .then(resp => {
         let result = resp.data as Result
         if (result.code === 60031) {

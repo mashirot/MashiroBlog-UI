@@ -14,6 +14,16 @@
             <el-button type="text" @click="jump2Article(scope.row.articleId)">文章</el-button>
           </template>
         </el-table-column>
+        <el-table-column label="回复">
+          <template #default="scope">
+            <div v-if="scope.row.receiverNickname === null">
+              楼主
+            </div>
+            <div v-else>
+              {{ scope.row.receiverNickname }}
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="content" label="内容"/>
         <el-table-column prop="senderIp" label="IP"/>
         <el-table-column prop="secret" label="是否私密"/>
