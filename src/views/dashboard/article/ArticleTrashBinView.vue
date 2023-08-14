@@ -25,7 +25,7 @@
         </el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
-            <el-button size="small" type="success" @click="handleReply(scope.row.articleId)">
+            <el-button size="small" type="success" @click="handleRecover(scope.row.articleId)">
               恢复
             </el-button>
           </template>
@@ -66,7 +66,7 @@ onMounted(() => {
   pageDelArticle(1);
 })
 
-function handleReply(articleId: string) {
+function handleRecover(articleId: string) {
   ElMessageBox.confirm(
       '确定要恢复这篇文章吗？',
       'Warning',
@@ -76,12 +76,12 @@ function handleReply(articleId: string) {
         type: 'warning',
       }
   ).then(() => {
-    subReply(articleId)
+    subRecover(articleId)
   })
 }
 
-function subReply(articleId: string) {
-  axios.put(`/article/reply/${articleId}`)
+function subRecover(articleId: string) {
+  axios.put(`/article/recover/${articleId}`)
       .then(resp => {
         let result = resp.data as Result
         if (result.code === 20031) {

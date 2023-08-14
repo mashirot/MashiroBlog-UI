@@ -41,12 +41,20 @@
           <img :src="`https://www.gravatar.com/avatar/${comment.senderEmailMD5}`" alt="senderAvatar">
           <div class="info">
             <div class="sender">
-              {{ comment.senderNickname }}
+              <div v-if="!comment.receiverNickname">
+                {{ comment.senderNickname }}
+              </div>
+              <div v-else>
+                {{ comment.senderNickname }}
+                <span class="reply">reply</span>
+                {{ comment.receiverNickname }}
+              </div>
             </div>
             <div class="sendTime">
               {{ dayjs(comment.createTime as any).format("YYYY-MM-DD hh:mm:ss") }}
             </div>
           </div>
+          <el-button size="small" style="margin-left: auto;" @click="handleReply(comment)">回复</el-button>
         </div>
         <div class="commentContent">
           <v-md-editor v-model="comment.content" mode="preview"></v-md-editor>
@@ -66,46 +74,34 @@
       />
     </div>
     <div class="comment-form">
-      <div class="title">
-        发布评论：
+      <div v-if="!isReply">
+        <div class="title">
+          发布评论：
+        </div>
+        <CommentReleaseComponent :articleId="articleId"/>
       </div>
-      <el-form ref="commentFormRef" :model="commentForm" :rules="commentFormRule">
-        <el-form-item prop="content" label="评论：">
-          <v-md-editor v-model="commentForm.content" height="200px"></v-md-editor>
-        </el-form-item>
-        <div class="nickname-email">
-          <el-form-item prop="senderNickname" label="昵称：">
-            <el-input v-model="commentForm.senderNickname"/>
-          </el-form-item>
-          <el-form-item prop="senderEmail" label="邮箱：">
-            <el-input v-model="commentForm.senderEmail"/>
-          </el-form-item>
-          <el-form-item label="私密评论">
-            <el-switch v-model="commentForm.secret"/>
-          </el-form-item>
+      <div v-else>
+        <div class="title">
+          回复：{{ reply2.receiverNickname }}
+          <el-button style="margin-left: 15px;" size="small" @click="handleCancelReply">取消回复</el-button>
         </div>
-        <div class="button">
-          <el-form-item>
-            <el-button type="primary" @click="handlerSubmit(commentFormRef)">评论</el-button>
-            <el-button @click="resetForm(commentFormRef)">清空</el-button>
-          </el-form-item>
-        </div>
-      </el-form>
+        <CommentReleaseComponent :articleId="reply2.articleId" :commentSubForm="reply2"/>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
+import dayjs from "dayjs";
 import {useRoute, useRouter} from "vue-router";
 import {onMounted, reactive, ref} from "vue";
 import {ElNotification} from "element-plus";
-import type {FormRules, FormInstance} from "element-plus";
 import type {Result} from "@/interface/result";
 import type {Article} from "@/interface/article";
-import type {CommentView, CommentSubmit} from "@/interface/comment";
+import type {CommentSubmit, CommentView} from "@/interface/comment";
 import type {Page} from "@/interface/page";
-import dayjs from "dayjs";
+import CommentReleaseComponent from "@/components/CommentReleaseComponent.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -126,28 +122,16 @@ const commentPage = reactive<Page<CommentView>>({
   current: 0,
   pages: 0
 })
-const hidePageComponent = ref(false)
-const commentFormRef = ref<FormInstance>()
-const commentForm = reactive<CommentSubmit>({
-  articleId: articleId,
+const hidePageComponent = ref<Boolean>(false)
+const isReply = ref<Boolean>(false)
+const reply2 = reactive<CommentSubmit>({
+  articleId: "",
   senderNickname: "",
   senderEmail: "",
+  receiverNickname: null,
+  replyCommentId: null,
   content: "",
   secret: false
-})
-const commentFormRule = reactive<FormRules<CommentSubmit>>({
-  content: [
-    {required: true, message: '请输入评论内容', trigger: 'blur'},
-  ],
-  senderNickname: [
-    {required: true, message: '请输入昵称', trigger: 'blur'},
-    {min: 2, max: 20, message: '长度在 2 到 20', trigger: 'blur'},
-  ],
-  senderEmail: [
-    {required: true, message: '请输入邮箱', trigger: 'blur'},
-    {pattern: /^[A-Za-z0-9]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, message: '请输入合法邮箱', trigger: 'blur'},
-    {min: 5, max: 30, message: '长度在 5 到 30', trigger: 'blur'},
-  ]
 })
 
 onMounted(() => {
@@ -155,37 +139,15 @@ onMounted(() => {
   pageComment(1)
 })
 
-function subComment(formEl: FormInstance) {
-  axios.post("/comment", commentForm)
-      .then(resp => {
-        let result = resp.data as Result
-        if (result.code === 60011) {
-          ElNotification.success("评论成功，审核后显示")
-          pageComment(1)
-          resetForm(formEl)
-        } else if (result.code === 60010) {
-          ElNotification.warning(result.msg as string)
-        } else {
-          ElNotification.error('Network Err')
-        }
-      })
-      .catch()
+function handleCancelReply() {
+  isReply.value = false
 }
 
-async function handlerSubmit(formEl: FormInstance | undefined) {
-  if (!formEl) return
-  await formEl.validate((valid) => {
-    if (valid) {
-      subComment(formEl)
-    } else {
-      ElNotification.warning('请输入合法参数')
-    }
-  })
-}
-
-function resetForm(formEl: FormInstance | undefined) {
-  if (!formEl) return
-  formEl.resetFields()
+function handleReply(comment: CommentView) {
+  isReply.value = true
+  reply2.articleId = comment.articleId
+  reply2.replyCommentId = comment.id
+  reply2.receiverNickname = comment.senderNickname
 }
 
 function getArticle() {
@@ -310,11 +272,11 @@ function pageComment(current: number) {
     }
 
     .comment-item {
-      margin: 0 20px 25px;
+      margin: 0 20px;
 
       .header {
         display: flex;
-        margin: 10px 0;
+        margin: 10px 0 0;
         align-items: center;
         font-size: 16px;
 
@@ -328,6 +290,11 @@ function pageComment(current: number) {
           margin-left: 10px;
           flex-direction: column;
 
+          .reply {
+            //font-size: 14px;
+            margin: 0 5px;
+          }
+
           .sendTime {
             font-size: 12px;
           }
@@ -335,7 +302,7 @@ function pageComment(current: number) {
       }
 
       .commentContent {
-        margin: 0 50px;
+        margin: 0 25px;
       }
     }
 
@@ -350,24 +317,8 @@ function pageComment(current: number) {
   .comment-form {
 
     .title {
+      display: flex;
       margin: 0 0 15px;
-    }
-
-    .nickname-email {
-      display: flex;
-      flex-direction: row;
-
-      :deep(.el-form-item:nth-child(1)) {
-        margin-right: 10px;
-      }
-
-      :deep(.el-form-item:nth-child(3)) {
-        margin-left: auto;
-      }
-    }
-
-    .button {
-      display: flex;
     }
   }
 }

@@ -11,12 +11,12 @@ const router = createRouter({
                 {
                     path: '',
                     name: 'articlePreview',
-                    component: () => import('@/views/homePage/ArticlePreviewView.vue')
+                    component: () => import('@/views/homePage/article/ArticlePreviewView.vue')
                 },
                 {
                     path: 'article/:articleId',
                     name: 'article',
-                    component: () => import('@/views/homePage/ArticleView.vue')
+                    component: () => import('@/views/homePage/article/ArticleView.vue')
                 },
             ]
         },
