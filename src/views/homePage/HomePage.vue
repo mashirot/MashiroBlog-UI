@@ -3,7 +3,7 @@
     <div class="aside">
       <div class="owner-info">
         <div class="avatar">
-          <img :src="avatar" alt="avatar">
+          <img :src="avatar" alt="avatar" @click="router.push({name: 'login'})">
         </div>
         <div class="nickname">
           {{ sysInfoStore.sysInfo.ownerNickname }}
@@ -110,6 +110,10 @@ function getSysInfo() {
           width: 100px;
           height: 100px;
           border-radius: 50%;
+
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
 

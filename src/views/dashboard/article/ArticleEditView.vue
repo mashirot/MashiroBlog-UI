@@ -1,9 +1,11 @@
 <template>
-  <div class="title">
-    修改：{{ article.title }}
+  <div class="inner-container">
+    <div class="title">
+      修改：{{ article.title }}
+    </div>
+    <el-divider/>
+    <ArticleEditComponent :article="article" type="put"/>
   </div>
-  <el-divider/>
-  <ArticleEditComponent :article="article" type="put"/>
 </template>
 
 <script setup lang="ts">
@@ -55,9 +57,13 @@ function getArticle() {
 </script>
 
 <style scoped lang="less">
-.title {
-  margin-left: 10px;
-  font-size: 24px;
-  font-weight: 700;
+.inner-container {
+  position: relative;
+
+  .title {
+    margin-left: 10px;
+    font-size: 24px;
+    font-weight: 700;
+  }
 }
 </style>

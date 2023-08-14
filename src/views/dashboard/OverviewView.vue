@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="inner-container">
     <div class="info">
       <el-row>
         <el-col :span="4">
@@ -127,7 +127,10 @@ function pageComment() {
 </script>
 
 <style scoped lang="less">
-.container {
+.inner-container {
+  position: relative;
+  width: 100%;
+
   .info {
     margin: 20px 0;
 

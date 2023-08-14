@@ -1,6 +1,7 @@
 import {reactive} from 'vue'
 import {defineStore} from 'pinia'
 import type {SysDetailInfo, SysInfo} from "@/interface/sysInfo";
+import type {Admin} from "@/interface/admin";
 
 export const useSysInfoStore = defineStore('counter', () => {
 
@@ -24,4 +25,16 @@ export const useSysInfoStore = defineStore('counter', () => {
     })
 
     return {sysDetail, sysInfo}
+})
+
+export const useAdminStore = defineStore('admin', () => {
+
+    let admin = reactive<Admin>({
+        id: '',
+        username: '',
+        email: '',
+        token: ''
+    })
+
+    return {admin}
 })

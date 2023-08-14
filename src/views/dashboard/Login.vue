@@ -33,8 +33,10 @@ import type {FormInstance} from "element-plus";
 import type {FormRules} from 'element-plus/lib/components/index.js';
 import type {Admin, AdminLogin} from "@/interface/admin";
 import type {Result} from "@/interface/result";
+import {useAdminStore} from "@/stores/counter";
 
 const router = useRouter();
+const adminStore = useAdminStore();
 
 const loginFormRef = ref<FormInstance>();
 const loginForm = reactive<AdminLogin>({
@@ -81,13 +83,17 @@ function subLogin() {
         const result = resp.data as Result;
         if (result.code === 10011) {
           const admin = result.data as Admin;
+          adminStore.admin.id = admin.id
+          adminStore.admin.username = admin.username
+          adminStore.admin.email = admin.email
+          adminStore.admin.token = admin.token
           localStorage.setItem("authToken", admin.token);
           ElNotification.success("登陆成功，即将跳转")
           setTimeout(() => {
             router.push({name: "overview"});
           }, 1500);
         } else {
-          ElNotification.error(result.msg);
+          ElNotification.error(result.msg as string);
         }
       }).catch(e => {
         console.log(e);

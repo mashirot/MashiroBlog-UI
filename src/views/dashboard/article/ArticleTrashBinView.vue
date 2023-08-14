@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="inner-container">
     <div class="header">
       <div class="title">
         文章回收站
@@ -128,7 +128,8 @@ function pageDelArticle(current: number) {
 </script>
 
 <style scoped lang="less">
-.container {
+.inner-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
