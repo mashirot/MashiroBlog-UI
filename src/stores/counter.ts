@@ -1,6 +1,6 @@
 import {reactive} from 'vue'
 import {defineStore} from 'pinia'
-import type {SysDetailInfo} from "@/interface/sysInfo";
+import type {SysDetailInfo, SysInfo} from "@/interface/sysInfo";
 
 export const useSysInfoStore = defineStore('counter', () => {
 
@@ -16,5 +16,12 @@ export const useSysInfoStore = defineStore('counter', () => {
         runDay: 0
     });
 
-    return {sysDetail}
+    let sysInfo = reactive<SysInfo>({
+        ownerNickname: "",
+        ownerEmailMD5: "",
+        ownerProfile: "",
+        runDay: 0
+    })
+
+    return {sysDetail, sysInfo}
 })

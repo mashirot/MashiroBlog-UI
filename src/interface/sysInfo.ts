@@ -1,9 +1,6 @@
 export interface SysInfo {
     ownerNickname: string,
-    ownerEmail: string,
     ownerProfile: string,
-    articleCount: number,
-    commentCount: number,
     runDay: number
 }
 

@@ -6,16 +6,18 @@
           <img :src="avatar" alt="avatar">
         </div>
         <div class="nickname">
-          {{ sysInfo?.ownerNickname }}
+          {{ sysInfoStore.sysInfo.ownerNickname }}
         </div>
         <div class="profile">
-          {{ sysInfo?.ownerProfile }}
+          {{ sysInfoStore.sysInfo.ownerProfile }}
         </div>
       </div>
       <div class="category">
+        <div class="home" @click="router.push({name: 'articlePreview'})">首页</div>
+      </div><div class="category">
         <div class="header">分类</div>
         <div class="category-item" v-for="(category) in categories">
-          {{ category.name }}
+          <div @click="handleCategorySel(category.name)">{{ category.name }}</div>
         </div>
       </div>
     </div>
@@ -25,44 +27,45 @@
   </div>
 </template>
 <script setup lang="ts">
-import md5 from 'crypto-js/md5';
 import axios from "axios";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, ref} from "vue";
 import type {Result} from "@/interface/result";
-import type {SysInfo} from "@/interface/sysInfo";
 import type {Category} from "@/interface/category";
+import {useSysInfoStore} from "@/stores/counter";
+import {ElNotification} from "element-plus";
+import {useRouter} from "vue-router";
 
+const sysInfoStore = useSysInfoStore();
+const router = useRouter();
 let avatar = ref<string>();
-let sysInfo = ref<SysInfo>({
-  ownerNickname: "",
-  ownerEmail: "",
-  ownerProfile: "",
-  articleCount: 0,
-  commentCount: 0,
-  runDay: 0
-});
-let categories = reactive<Array<Category>>([]);
+let categories = ref<Array<Category>>([]);
 
 onMounted(() => {
   getSysInfo();
-  const email = sysInfo.value.ownerEmail?.trim().toLowerCase();
-  const avatarEmailMD5 = md5(email!).toString();
-  avatar.value = `https://www.gravatar.com/avatar/${avatarEmailMD5}`;
+  avatar.value = `https://www.gravatar.com/avatar/${sysInfoStore.sysInfo.ownerEmailMD5}`;
 })
+
+function handleCategorySel(categoryName: String) {
+  router.push({name: 'categoryArticlePreview', params: {categoryName: categoryName}})
+}
 
 function getSysInfo() {
   axios.get("/info")
       .then(resp => {
         let result = resp.data as Result
         if (result.code === 50011) {
-          sysInfo.value = result.data
+          sysInfoStore.sysInfo.ownerNickname = result.data.ownerNickname
+          sysInfoStore.sysInfo.ownerEmailMD5 = result.data.ownerEmailMD5
+          sysInfoStore.sysInfo.ownerProfile = result.data.ownerProfile
+          sysInfoStore.sysInfo.runDay = result.data.runDay
+        } else if (result.code === 50010) {
+          ElNotification.warning(result.msg)
         } else {
-          console.log(result.msg)
+          ElNotification.error('Err')
         }
       }).catch(e => {
-        console.log(e)
-      }
-  )
+    console.log(e)
+  })
 }
 
 (function getCategory() {
@@ -70,12 +73,15 @@ function getSysInfo() {
       .then(resp => {
         let result = resp.data as Result
         if (result.code === 40031) {
-          categories = result.data
+          categories.value = result.data
+        } else if (result.code === 40030) {
+          ElNotification.warning(result.msg)
         } else {
-          console.log(result.msg)
+          ElNotification.error('Err')
         }
-      })
-      .catch();
+      }).catch(e => {
+    console.log(e)
+  })
 })()
 
 </script>
@@ -121,8 +127,17 @@ function getSysInfo() {
       }
     }
 
+    .home {
+      height: 25px;
+      font-size: 18px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
     .category {
-      padding: 20px 20px 15px;
+      padding: 5px 20px 15px;
 
       .header {
         padding-bottom: 5px;

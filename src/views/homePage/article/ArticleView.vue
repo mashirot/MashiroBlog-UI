@@ -7,7 +7,7 @@
       <div class="info">
         <div class="author">
           <i class="bi bi-person"></i>
-          Author
+          {{ sysInfoStore.sysInfo.ownerNickname }}
         </div>
         <div class="createTime">
           <i class="bi bi-clock"></i>
@@ -102,11 +102,13 @@ import type {Article} from "@/interface/article";
 import type {CommentSubmit, CommentView} from "@/interface/comment";
 import type {Page} from "@/interface/page";
 import CommentReleaseComponent from "@/components/CommentReleaseComponent.vue";
+import {useSysInfoStore} from "@/stores/counter";
 
 const route = useRoute()
 const router = useRouter()
 const articleId = route.params.articleId as string;
 
+const sysInfoStore = useSysInfoStore();
 let article = reactive<Article>({
   id: "",
   authorId: "",
