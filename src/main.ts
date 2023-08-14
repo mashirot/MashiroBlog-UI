@@ -12,7 +12,7 @@ import '@kangc/v-md-editor/lib/style/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css';
 // 行号
-import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index';
+import createLineNumberPlugin from '@kangc/v-md-editor/lib/plugins/line-number/index';
 // 复制
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';
@@ -28,7 +28,7 @@ VueMarkdownEditor.use(vuepressTheme, {
     Prism,
 });
 
-VueMarkdownEditor.use(createLineNumbertPlugin())
+VueMarkdownEditor.use(createLineNumberPlugin())
 VueMarkdownEditor.use(createCopyCodePlugin());
 
 app.use(createPinia())
