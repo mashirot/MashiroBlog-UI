@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="inner-container">
     <div class="header">
       <div class="title">
         评论管理
@@ -144,7 +144,8 @@ function pageComment(current: number) {
 </script>
 
 <style scoped lang="less">
-.container {
+.inner-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;

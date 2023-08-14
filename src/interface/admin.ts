@@ -23,5 +23,5 @@ export interface AdminUpdate {
     nickname: string,
     password: string,
     email: string,
-    profile: string,
+    profile: string
 }

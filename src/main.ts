@@ -41,6 +41,7 @@ axios.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     if (error.response.data.code === 10010 || error.response.data.code === 10012) {
+        localStorage.clear();
         ElNotification.error(error.response.data.msg);
         router.push({name: 'login'})
     }
