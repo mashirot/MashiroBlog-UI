@@ -14,6 +14,16 @@ const router = createRouter({
                     component: () => import('@/views/homePage/article/ArticlePreviewView.vue')
                 },
                 {
+                    path: 'category/:categoryName',
+                    name: 'categoryArticlePreview',
+                    component: () => import('@/views/homePage/article/CategoryArticlePreviewView.vue')
+                },
+                {
+                    path: 'tag/:tagName',
+                    name: 'tagArticlePreview',
+                    component: () => import('@/views/homePage/article/TagArticlePreviewView.vue')
+                },
+                {
                     path: 'article/:articleId',
                     name: 'article',
                     component: () => import('@/views/homePage/article/ArticleView.vue')

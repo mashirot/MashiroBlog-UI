@@ -1,23 +1,23 @@
 <template>
   <div class="container">
     <div class="article-preview-item" v-for="(preview) in previews as Array<ArticlePreview>">
-      <div class="title">
+      <div class="title" @click="jump2ArticleDetail(preview.articleId)">
         {{ preview.title }}
       </div>
       <div class="tag">
         <i class="bi bi-tags-fill"></i>
         <div v-if="preview.tag.length === 0" style="display:flex;">
-          <div class="tag-item">
+          <div class="no-tag">
             NoTag
           </div>
         </div>
         <div v-else style="display:flex;">
-          <div class="tag-item" v-for="(tag) in preview.tag">
+          <div class="tag-item" v-for="(tag) in preview.tag" @click="jump2TagArticlePreviewView(tag)">
             {{ tag }}
           </div>
         </div>
       </div>
-      <div class="content">
+      <div class="content" @click="jump2ArticleDetail(preview.articleId)">
         {{ preview.previewContent }}
       </div>
       <div class="footer">
@@ -46,10 +46,20 @@
 <script setup lang="ts">
 import type {ArticlePreview} from '@/interface/article';
 import dayjs from "dayjs";
+import {useRouter} from "vue-router";
 
+const router = useRouter()
 defineProps({
   previews: Array<ArticlePreview>
 })
+
+function jump2ArticleDetail(articleId: String) {
+  router.push({name: 'article', params: {articleId: articleId}})
+}
+
+function jump2TagArticlePreviewView(tagName: String) {
+  router.push({name: 'tagArticlePreview', params: {tagName: tagName}})
+}
 
 </script>
 
@@ -67,6 +77,10 @@ defineProps({
       margin: 10px 5px;
       font-size: 20px;
       font-weight: 550;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .tag {
@@ -85,23 +99,40 @@ defineProps({
         vertical-align: bottom;
       }
 
-      .tag-item {
+      .no-tag {
         display: flex;
         justify-content: left;
         padding: 5px;
-
         margin: 0 5px;
-
         height: 12px;
         text-align: center;
         background-color: #f6f6f6;
         border-radius: 5px;
+      }
+
+      .tag-item {
+        display: flex;
+        justify-content: left;
+        padding: 5px;
+        margin: 0 5px;
+        height: 12px;
+        text-align: center;
+        background-color: #f6f6f6;
+        border-radius: 5px;
+
+        &:hover {
+          cursor: pointer;
+        }
       }
     }
 
     .content {
       margin: 15px;
       color: #3d3d3d;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .footer {
@@ -115,7 +146,7 @@ defineProps({
         margin: 0 5px;
       }
 
-      i{
+      i {
         margin: 0 3px;
         vertical-align: bottom;
       }

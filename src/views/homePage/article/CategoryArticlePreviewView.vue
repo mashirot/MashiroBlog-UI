@@ -23,9 +23,11 @@ import axios from "axios";
 import type {Result} from "@/interface/result";
 import type {Page} from "@/interface/page";
 import type {ArticlePreview} from "@/interface/article";
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
+import {useRoute} from "vue-router";
 import {ElNotification} from "element-plus";
 
+const route = useRoute()
 const page = reactive<Page<ArticlePreview>>({
   records: [],
   current: 0,
@@ -37,8 +39,14 @@ onMounted(() => {
   pageArticle(1);
 })
 
+watch(() => route.params.categoryName, (newValue, oldValue) => {
+  if (newValue) {
+    pageArticle(page.current);
+  }
+})
+
 function pageArticle(current: number) {
-  axios.get("/article/page", {
+  axios.get(`/category/${route.params.categoryName}`, {
         params: {
           page: current,
           pageSize: 10
@@ -47,7 +55,7 @@ function pageArticle(current: number) {
   )
       .then(resp => {
         let result = resp.data as Result
-        if (result.code === 30031) {
+        if (result.code === 40031) {
           page.records = result.data.records;
           page.current = parseInt(result.data.current);
           page.pages = parseInt(result.data.pages);
