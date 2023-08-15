@@ -41,6 +41,12 @@
                 <el-menu-item index="/dashboard/comment/unreviewed"><span>待审核评论</span></el-menu-item>
                 <el-menu-item index="/dashboard/comment/trash"><span>回收站</span></el-menu-item>
               </el-sub-menu>
+              <el-menu-item index="/dashboard/category" @click="router.push({name: 'categoryManage'})">
+                <span>分类管理</span>
+              </el-menu-item>
+              <el-menu-item index="/dashboard/tag" @click="router.push({name: 'tagManage'})">
+                <span>标签管理</span>
+              </el-menu-item>
             </el-menu>
           </el-col>
         </el-row>

@@ -55,7 +55,7 @@ function pageArticle(current: number) {
             hidePageComponent.value = true
           }
         } else {
-          ElNotification.error(result.msg)
+          ElNotification.error(result.msg as string)
         }
       }).catch(e => {
         console.log(e)

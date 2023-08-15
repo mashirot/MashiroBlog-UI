@@ -45,7 +45,7 @@ onMounted(() => {
   avatar.value = `https://www.gravatar.com/avatar/${sysInfoStore.sysInfo.ownerEmailMD5}`;
 })
 
-function handleCategorySel(categoryName: String) {
+function handleCategorySel(categoryName: string) {
   router.push({name: 'categoryArticlePreview', params: {categoryName: categoryName}})
 }
 
@@ -58,10 +58,8 @@ function getSysInfo() {
           sysInfoStore.sysInfo.ownerEmailMD5 = result.data.ownerEmailMD5
           sysInfoStore.sysInfo.ownerProfile = result.data.ownerProfile
           sysInfoStore.sysInfo.runDay = result.data.runDay
-        } else if (result.code === 50010) {
-          ElNotification.warning(result.msg)
         } else {
-          ElNotification.error('Err')
+          ElNotification.error(result.msg as string)
         }
       }).catch(e => {
     console.log(e)
@@ -74,10 +72,8 @@ function getSysInfo() {
         let result = resp.data as Result
         if (result.code === 40031) {
           categories.value = result.data
-        } else if (result.code === 40030) {
-          ElNotification.warning(result.msg)
         } else {
-          ElNotification.error('Err')
+          ElNotification.error(result.msg as string)
         }
       }).catch(e => {
     console.log(e)

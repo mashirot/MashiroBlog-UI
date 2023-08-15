@@ -1,5 +1,6 @@
 export interface SysInfo {
     ownerNickname: string,
+    ownerEmailMD5: string,
     ownerProfile: string,
     runDay: number
 }

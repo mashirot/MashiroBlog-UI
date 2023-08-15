@@ -77,6 +77,16 @@ const router = createRouter({
                     name: 'commentTrashBin',
                     component: () => import('@/views/dashboard/comment/CommentTrashBinView.vue')
                 },
+                {
+                    path: 'category',
+                    name: 'categoryManage',
+                    component: () => import('@/views/dashboard/category/CategoryManageView.vue')
+                },
+                {
+                    path: 'tag',
+                    name: 'tagManage',
+                    component: () => import('@/views/dashboard/tag/TagManageView.vue')
+                },
             ],
             beforeEnter: (to, from, next) => {
                 if (localStorage.getItem("authToken")) {
