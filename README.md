@@ -1,40 +1,27 @@
-# MashiroBlog-UI
+# MashiroBlog
 
-This template should help get you started developing with Vue 3 in Vite.
+一套前后端分离的博客项目，后端使用Java，Kotlin混合开发，前端采用Vue+TypeScript
 
-## Recommended IDE Setup
+## 项目介绍
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+本项目是博客的前端，使用Vue3+Ts，VueRouter，Pinia，ElementPlus开发
 
-## Type Support for `.vue` Imports in TS
+本人定位为后端开发，前端只是能看的程度，对于页面设计、美化等并不熟悉
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## 部署
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+1. clone项目
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+   `git clone https://github.com/mashirot/MashiroBlog.git`
 
-## Customize configuration
+2. 配置
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+    修改`src/main.ts`中的`axios.defaults.baseURL`为后端地址
 
-## Project Setup
+3. 打包
 
-```sh
-npm install
-```
+    `npm run build`
 
-### Compile and Hot-Reload for Development
+4. 托管
 
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
+    将`./dist`文件夹中的文件放到Nginx的对应目录下
