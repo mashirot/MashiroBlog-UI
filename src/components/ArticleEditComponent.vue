@@ -63,7 +63,7 @@
       </el-form>
     </div>
     <div class="button">
-      <el-button @click="router.back()">取消</el-button>
+      <el-button @click="resetForm(articleFormRef);router.back();">取消</el-button>
       <el-button type="primary" @click="submitForm(articleFormRef)">提交</el-button>
     </div>
   </div>
@@ -111,11 +111,11 @@ const InputRef = ref<InstanceType<typeof ElInput>>()
 const articleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules<Article>>({
   title: [
-    { required: true, message: '请输入标题', trigger: 'blur' },
-    { min: 1, max: 200, message: 'Length should be 1 to 200', trigger: 'blur' },
+    {required: true, message: '请输入标题', trigger: 'blur'},
+    {min: 1, max: 200, message: 'Length should be 1 to 200', trigger: 'blur'},
   ],
   content: [
-    { required: true, message: '请输入内容', trigger: 'blur' },
+    {required: true, message: '请输入内容', trigger: 'blur'},
   ],
 })
 
@@ -123,20 +123,26 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      subArticle()
+      subArticle(formEl)
     } else {
       console.log('error submit!', fields)
     }
   })
 }
 
-function subArticle() {
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
+
+function subArticle(formEl: FormInstance) {
   if (props.type === 'put') {
     axios.put('/article', article.value)
         .then(resp => {
           const result = resp.data as Result
           if (result.code === 20031) {
             ElNotification.success('修改成功')
+            resetForm(formEl)
             router.push({name: 'articleManage'})
           } else if (result.code === 20030) {
             ElNotification.warning(result.msg as string)

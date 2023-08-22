@@ -37,12 +37,11 @@ import {useRouter} from "vue-router";
 
 const sysInfoStore = useSysInfoStore();
 const router = useRouter();
-let avatar = ref<string>();
+let avatar = ref<string>("");
 let categories = ref<Array<Category>>([]);
 
 onMounted(() => {
   getSysInfo();
-  avatar.value = `https://www.gravatar.com/avatar/${sysInfoStore.sysInfo.ownerEmailMD5}`;
 })
 
 function handleCategorySel(categoryName: string) {
@@ -58,6 +57,7 @@ function getSysInfo() {
           sysInfoStore.sysInfo.ownerEmailMD5 = result.data.ownerEmailMD5
           sysInfoStore.sysInfo.ownerProfile = result.data.ownerProfile
           sysInfoStore.sysInfo.runDay = result.data.runDay
+          avatar.value = `https://www.gravatar.com/avatar/${sysInfoStore.sysInfo.ownerEmailMD5}`;
         } else {
           ElNotification.error(result.msg as string)
         }

@@ -51,15 +51,16 @@ import dayjs from "dayjs";
 import {onMounted, reactive} from "vue";
 import {useSysInfoStore} from "@/stores/counter";
 import {useRouter} from "vue-router";
+import {storeToRefs} from 'pinia';
 import type {Result} from "@/interface/result";
 import type {Page} from "@/interface/page";
-import type {SysDetailInfo} from "@/interface/sysInfo";
 import type {ArticlePreview} from "@/interface/article";
 import type {CommentView} from "@/interface/comment";
 
 const router = useRouter();
 const sysInfoStore = useSysInfoStore();
-const sysDetail: SysDetailInfo = sysInfoStore.sysDetail;
+const {sysDetail} = storeToRefs(sysInfoStore);
+
 let page = reactive<Page<ArticlePreview>>({
   records: [],
   current: 0,

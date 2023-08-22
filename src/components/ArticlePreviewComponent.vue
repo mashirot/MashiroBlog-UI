@@ -23,11 +23,11 @@
       <div class="footer">
         <div class="author">
           <i class="bi bi-person"></i>
-          Author
+          {{ sysInfoStore.sysInfo.ownerNickname }}
         </div>
         <div class="createTime">
           <i class="bi bi-clock"></i>
-          {{ dayjs(preview.createTime).format("YYYY-MM-DD hh:mm:ss") }}
+          {{ dayjs(preview.createTime as any).format("YYYY-MM-DD hh:mm:ss") }}
         </div>
         <div class="commentCount">
           <i class="bi bi-chat-left-text"></i>
@@ -47,17 +47,20 @@
 import type {ArticlePreview} from '@/interface/article';
 import dayjs from "dayjs";
 import {useRouter} from "vue-router";
+import {useSysInfoStore} from "@/stores/counter";
 
 const router = useRouter()
+const sysInfoStore = useSysInfoStore()
+
 defineProps({
   previews: Array<ArticlePreview>
 })
 
-function jump2ArticleDetail(articleId: String) {
+function jump2ArticleDetail(articleId: string) {
   router.push({name: 'article', params: {articleId: articleId}})
 }
 
-function jump2TagArticlePreviewView(tagName: String) {
+function jump2TagArticlePreviewView(tagName: string) {
   router.push({name: 'tagArticlePreview', params: {tagName: tagName}})
 }
 

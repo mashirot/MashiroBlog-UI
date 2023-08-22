@@ -141,7 +141,7 @@ onMounted(() => {
   pageComment(1)
 })
 
-function jump2TagArticlePreviewView(tagName: String) {
+function jump2TagArticlePreviewView(tagName: string) {
   router.push({name: 'tagArticlePreview', params: {tagName: tagName}})
 }
 

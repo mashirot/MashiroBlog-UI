@@ -7,7 +7,7 @@
       <el-dropdown>
         <div class="admin">
           <i class="bi bi-person"></i>
-          <span>{{ adminStore.admin.username }}</span>
+          <span>{{ sysDetail.ownerNickname }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
@@ -114,13 +114,14 @@
 <script setup lang="ts">
 import axios from "axios";
 import dayjs from "dayjs";
-import {onMounted, ref, reactive} from "vue";
+import {onMounted, ref, reactive, toRefs} from "vue";
 import {useRoute, useRouter} from "vue-router";
+import {storeToRefs} from 'pinia';
 import {useAdminStore, useSysInfoStore} from "@/stores/counter";
 import {ElNotification} from "element-plus";
 import type {FormInstance, FormRules} from "element-plus";
 import type {Result} from "@/interface/result";
-import type {AdminInfo, AdminUpdate} from "@/interface/admin";
+import type {Admin, AdminInfo, AdminUpdate} from "@/interface/admin";
 
 const route = useRoute();
 const router = useRouter();
@@ -163,6 +164,7 @@ const adminUpdateFormRule = reactive<FormRules<AdminUpdate>>({
     {min: 1, max: 500, message: '长度在 1 到 500', trigger: 'blur'}
   ]
 })
+const {sysDetail} = storeToRefs(sysInfoStore)
 
 onMounted(() => {
   getSysInfo()
